@@ -1,0 +1,104 @@
+---
+title: "Jason McCoy - Extra Credit Problem #2 (15 points)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Skewness and kurtosis statistics are used to assess normality or lack thereof during EDA. These statistics are affected by distributional shape and sample size. This exercise will investigate how variable the skewness statistic is when sampling from a standard normal distribution. The results will provide a baseline for evaluating data samples in the future. The skewness for the standard normal distribution is 0.0. Samples from a normal distribution will depart from this number, sometimes substantially.
+
+**Problem Statement (10 points)**
+
+Load the "moments" package which supplies *skewness()* and *kurtosis()* functions. Use three different samples size:  10, 40 and 100. For each sample size, draw 1000 random samples, and compute the skewness for each. Use *par(mfrow = c(3, 1))* and present histograms for these results. Compute the 2.5% (0.025) and 97.5% (0.975) quantiles, and the first and third quartiles for each histogram and present.
+
+The function defined below may be used to generate the samples for a given *n*. This function produces a 1000 x *n* dimensional array. Use *apply()* to compute the skewness for each row.
+
+```{r exampleFunction}
+
+example <- function(n){
+  set.seed(123)
+  result <- matrix(0, nrow = 1000, ncol = n)
+  for (k in 1:1000) {
+    result[k, ] <- rnorm(n, mean = 0, sd = 1)
+  }
+  return(result)
+}
+
+# We can define our 1000 x n matrices by passing our desired n to example(). For example, for
+# n = 10:
+
+sample10 <- example(10)
+
+# You will need to add code here for creating the same objects with n = 40 and n = 100.
+
+sample40 = example(40)
+sample100 = example(100)
+
+
+```
+
+In the following code 'chunk,' you will need to add code passing each 1000 x *n* matrix to an instance of *apply()*. Your matrices will be passed to *apply()* as X. You must specify MARGIN = 1 and FUN = skewness to have skewness calculated for each row; MARGIN = 2 would calculate the skewness for each column. You will then present the vectors of skewness results for n = 10, 40 and 100 as histograms and determine the 2.5% (0.025) and 97.5% (0.975) quantiles, and the first and third quartiles for each histogram and present. Use *quantile()*.
+
+```{r ecp_skewness}
+
+library(moments)  # install.packages("moments")
+
+#Vectors of skewness
+skew10 = apply(sample10,1,skewness)
+skew40 = apply(sample40,1,skewness)
+skew100 = apply(sample100,1,skewness)
+
+#Histograms
+par(mfrow = c(3, 1))
+hist(skew10,xlab="Skewness",ylab="Frequency",main="Histogram of Skeweness of Sample Size 10",col="blue")
+hist(skew40,xlab="Skewness",ylab="Frequency",main="Histogram of Skeweness of Sample Size 40",col="green")
+hist(skew100,xlab="Skewness",ylab="Frequency",main="Histogram of Skeweness of Sample Size 100",col="purple")
+
+quantile(skew10,c(0.025,0.975))
+quantile(skew10,c(0.25,0.75))
+
+
+quantile(skew40,c(0.025,0.975))
+quantile(skew40,c(0.25,0.75))
+
+
+quantile(skew100,c(0.025,0.975))
+quantile(skew100,c(0.25,0.75))
+
+# Note that as the sample size increases from 10 to 40 to 100, there is more concentration of the skewness values around 0.
+
+```
+
+**Additional (5 points)**
+
+Additional credit (5 points) will be provided if results are also shown for kurtosis. Follow the instructions shown above for skewness.)  Kurtosis for a standard normal distribution is 3.0 using the "moments" package *kurtosis()* function. Sample values will depart from this number, sometimes substantially.
+
+```{r ecp_kurtosis}
+
+#Vectors of skewness
+kurt10 = apply(sample10,1,kurtosis)
+kurt40 = apply(sample40,1,kurtosis)
+kurt100 = apply(sample100,1,kurtosis)
+
+#Histograms
+par(mfrow = c(3, 1))
+hist(kurt10,xlab="kurtosis",ylab="Frequency",main="Histogram of kurtosis of Sample Size 10",col="blue")
+hist(kurt40,xlab="kurtosis",ylab="Frequency",main="Histogram of kurtosis of Sample Size 40",col="green")
+hist(kurt100,xlab="kurtosis",ylab="Frequency",main="Histogram of kurtosis of Sample Size 100",col="purple")
+
+quantile(kurt10,c(0.025,0.975))
+quantile(kurt10,c(0.25,0.75))
+
+
+quantile(kurt40,c(0.025,0.975))
+quantile(kurt40,c(0.25,0.75))
+
+
+quantile(kurt100,c(0.025,0.975))
+quantile(kurt100,c(0.25,0.75))
+
+#Note that as sample size increases from 10 to 40 to 100, more kurtosis gets concentrated around 3.
+
+```
